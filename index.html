@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sabor a mi tierra - Auténticos sabores de nuestra tierra">
+    <title>Sabor a mi tierra</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <a href="#inicio">Sabor a mi tierra</a>
+            </div>
+            <button class="menu-toggle" aria-label="Menú">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-links">
+                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#nosotros">Nosotros</a></li>
+                <li><a href="#productos">Productos</a></li>
+                <li><a href="#contacto">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="inicio" class="hero">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    <span class="animate-text">Sabor</span>
+                    <span class="animate-text">a mi</span>
+                    <span class="animate-text">tierra</span>
+                </h1>
+                <p class="hero-subtitle">Auténticos sabores de nuestra tierra</p>
+                <a href="#productos" class="btn-primary">Descubrir</a>
+            </div>
+            <div class="scroll-indicator">
+                <span>Scroll</span>
+                <div class="scroll-line"></div>
+            </div>
+        </section>
+
+        <section id="nosotros" class="about">
+            <div class="container">
+                <h2 class="section-title">Nuestra Historia</h2>
+                <div class="about-content">
+                    <p class="lead-text">Celebramos la riqueza culinaria de nuestra región con recetas tradicionales transmitidas de generación en generación.</p>
+                    <p>Cada producto cuenta una historia. Ingredientes frescos, técnicas artesanales y el amor por nuestra tierra se unen para crear experiencias gastronómicas únicas.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="productos" class="products">
+            <div class="container">
+                <h2 class="section-title">Nuestros Productos</h2>
+                <div class="products-grid">
+                    <article class="product-card">
+                        <div class="product-image"></div>
+                        <h3>Producto 1</h3>
+                        <p>Descripción del producto</p>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-image"></div>
+                        <h3>Producto 2</h3>
+                        <p>Descripción del producto</p>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-image"></div>
+                        <h3>Producto 3</h3>
+                        <p>Descripción del producto</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section id="contacto" class="contact">
+            <div class="container">
+                <h2 class="section-title">Contacto</h2>
+                <p class="lead-text">¿Tienes preguntas? ¡Nos encantaría saber de ti!</p>
+                <form class="contact-form">
+                    <input type="text" placeholder="Nombre" required>
+                    <input type="email" placeholder="Email" required>
+                    <textarea placeholder="Mensaje" rows="4" required></textarea>
+                    <button type="submit" class="btn-primary">Enviar</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h3>Sabor a mi tierra</h3>
+                    <p>Auténticos sabores desde nuestra tierra</p>
+                </div>
+                <div class="footer-links">
+                    <a href="#inicio">Inicio</a>
+                    <a href="#nosotros">Nosotros</a>
+                    <a href="#productos">Productos</a>
+                    <a href="#contacto">Contacto</a>
+                </div>
+                <div class="footer-social">
+                    <a href="#" aria-label="Instagram">Instagram</a>
+                    <a href="#" aria-label="Facebook">Facebook</a>
+                </div>
+            </div>
+            <p class="copyright">&copy; 2026 Sabor a mi tierra. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
