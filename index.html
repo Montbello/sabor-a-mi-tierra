@@ -1,118 +1,408 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Sabor a mi tierra - Auténticos sabores de nuestra tierra">
+    <meta name="description" content="Sabor a mi tierra - Raus aus der Bude. Entdecke echte Begegnungen und kulturelle Events.">
     <title>Sabor a mi tierra</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
+    <!-- Bewusste Friktion: Begrüßung -->
+    <div id="welcome-overlay" class="welcome-overlay" role="dialog" aria-modal="true">
+        <div class="welcome-content">
+            <h1>Raus aus der Bude.</h1>
+            <p>Bei uns gibt es immer etwas Lustiges um die Ecke – und das Echte passiert offline.</p>
+            <button class="btn-primary" id="enter-app">Events entdecken</button>
+        </div>
+    </div>
+
     <header>
         <nav class="navbar">
             <div class="logo">
-                <a href="#inicio">Sabor a mi tierra</a>
+                <a href="#" aria-label="Startseite">Sabor a mi tierra</a>
             </div>
-            <button class="menu-toggle" aria-label="Menú">
+            <button class="menu-toggle" aria-label="Menü öffnen" aria-expanded="false">
                 <span></span>
                 <span></span>
                 <span></span>
             </button>
-            <ul class="nav-links">
-                <li><a href="#inicio">Inicio</a></li>
-                <li><a href="#nosotros">Nosotros</a></li>
-                <li><a href="#productos">Productos</a></li>
-                <li><a href="#contacto">Contacto</a></li>
+            <ul class="nav-links" role="navigation">
+                <li><a href="#events" class="nav-link active">Events</a></li>
+                <li><a href="#angebot" class="nav-link">Angebot</a></li>
+                <li><a href="#community" class="nav-link">Community</a></li>
+                <li><a href="#profil" class="nav-link">Mein Bereich</a></li>
             </ul>
         </nav>
     </header>
 
     <main>
-        <section id="inicio" class="hero">
-            <div class="hero-content">
-                <h1 class="hero-title">
-                    <span class="animate-text">Sabor</span>
-                    <span class="animate-text">a mi</span>
-                    <span class="animate-text">tierra</span>
-                </h1>
-                <p class="hero-subtitle">Auténticos sabores de nuestra tierra</p>
-                <a href="#productos" class="btn-primary">Descubrir</a>
-            </div>
-            <div class="scroll-indicator">
-                <span>Scroll</span>
-                <div class="scroll-line"></div>
-            </div>
-        </section>
-
-        <section id="nosotros" class="about">
+        <!-- ==================== -->
+        <!-- C1: EVENT DISCOVERY -->
+        <!-- ==================== -->
+        <section id="events" class="section-events" aria-labelledby="events-title">
             <div class="container">
-                <h2 class="section-title">Nuestra Historia</h2>
-                <div class="about-content">
-                    <p class="lead-text">Celebramos la riqueza culinaria de nuestra región con recetas tradicionales transmitidas de generación en generación.</p>
-                    <p>Cada producto cuenta una historia. Ingredientes frescos, técnicas artesanales y el amor por nuestra tierra se unen para crear experiencias gastronómicas únicas.</p>
+                <header class="section-header">
+                    <h1 id="events-title" class="section-title">Was passiert um dich herum?</h1>
+                    <p class="section-subtitle">Entdecke Begegnungen – nicht Feeds.</p>
+                </header>
+
+                <!-- Zeitfilter (keine algorithmische Sortierung) -->
+                <div class="filter-bar" role="tablist" aria-label="Zeitfilter">
+                    <button class="filter-btn active" role="tab" aria-selected="true" data-filter="heute">Heute</button>
+                    <button class="filter-btn" role="tab" aria-selected="false" data-filter="woche">Diese Woche</button>
+                    <button class="filter-btn" role="tab" aria-selected="false" data-filter="naehe">In deiner Nähe</button>
+                </div>
+
+                <!-- Event-Karten (KEINE Infinite Scroll) -->
+                <div class="events-grid" role="list" aria-live="polite">
+                    <!-- Event Card 1 -->
+                    <article class="event-card" role="listitem">
+                        <div class="event-image" aria-hidden="true"></div>
+                        <div class="event-content">
+                            <div class="event-meta">
+                                <time datetime="2026-01-30T18:00">Heute, 18:00 Uhr</time>
+                                <span class="event-location">Marktplatz</span>
+                            </div>
+                            <h3 class="event-title">Street Food Abend</h3>
+                            <p class="event-context">Lokale Köche · Familienfreundlich · Draußen</p>
+                            <div class="event-social">
+                                <span class="social-proof">Beliebt in deinem Viertel</span>
+                            </div>
+                            <div class="event-actions">
+                                <button class="btn-secondary">Für später speichern</button>
+                                <button class="btn-primary">Hingehen</button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Event Card 2 -->
+                    <article class="event-card" role="listitem">
+                        <div class="event-image" aria-hidden="true"></div>
+                        <div class="event-content">
+                            <div class="event-meta">
+                                <time datetime="2026-01-31T14:00">Morgen, 14:00 Uhr</time>
+                                <span class="event-location">Kulturzentrum</span>
+                            </div>
+                            <h3 class="event-title">Kochworkshop: Traditionelle Rezepte</h3>
+                            <p class="event-context">Workshop · Anfänger willkommen · Drinnen</p>
+                            <div class="event-social">
+                                <span class="social-proof">Passt zu ähnlichen Interessen</span>
+                            </div>
+                            <div class="event-actions">
+                                <button class="btn-secondary">Für später speichern</button>
+                                <button class="btn-primary">Hingehen</button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Event Card 3 -->
+                    <article class="event-card" role="listitem">
+                        <div class="event-image" aria-hidden="true"></div>
+                        <div class="event-content">
+                            <div class="event-meta">
+                                <time datetime="2026-02-01T11:00">Sa, 11:00 Uhr</time>
+                                <span class="event-location">Stadtpark</span>
+                            </div>
+                            <h3 class="event-title">Kulturmarkt am Wochenende</h3>
+                            <p class="event-context">Markt · Alle Altersgruppen · Barrierefrei</p>
+                            <div class="event-social">
+                                <span class="social-proof">Oft gewählt bei Familien</span>
+                            </div>
+                            <div class="event-actions">
+                                <button class="btn-secondary">Für später speichern</button>
+                                <button class="btn-primary">Hingehen</button>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+
+                <!-- Bewusste Begrenzung: Klarer Endpunkt -->
+                <div class="content-end" role="status">
+                    <p>Das sind alle Events für heute.</p>
+                    <button class="btn-text" id="load-more-events">Weitere Tage anzeigen?</button>
                 </div>
             </div>
         </section>
 
-        <section id="productos" class="products">
+        <!-- ==================== -->
+        <!-- KARTE -->
+        <!-- ==================== -->
+        <section id="karte" class="section-map" aria-labelledby="map-title">
             <div class="container">
-                <h2 class="section-title">Nuestros Productos</h2>
-                <div class="products-grid">
-                    <article class="product-card">
-                        <div class="product-image"></div>
-                        <h3>Producto 1</h3>
-                        <p>Descripción del producto</p>
-                    </article>
-                    <article class="product-card">
-                        <div class="product-image"></div>
-                        <h3>Producto 2</h3>
-                        <p>Descripción del producto</p>
-                    </article>
-                    <article class="product-card">
-                        <div class="product-image"></div>
-                        <h3>Producto 3</h3>
-                        <p>Descripción del producto</p>
-                    </article>
+                <header class="section-header">
+                    <h2 id="map-title" class="section-title">Karte</h2>
+                    <p class="section-subtitle">Finde Events in deiner Umgebung – ohne Endlos-Zoom.</p>
+                </header>
+                <div class="map-container">
+                    <div class="map-placeholder">
+                        <p>Interaktive Karte wird hier angezeigt</p>
+                        <p class="map-note">Zeitfilter · Bedürfnisfilter · Barrierefreiheit</p>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <section id="contacto" class="contact">
+        <!-- ==================== -->
+        <!-- C2: FOOD & ANGEBOT -->
+        <!-- ==================== -->
+        <section id="angebot" class="section-angebot" aria-labelledby="angebot-title">
             <div class="container">
-                <h2 class="section-title">Contacto</h2>
-                <p class="lead-text">¿Tienes preguntas? ¡Nos encantaría saber de ti!</p>
-                <form class="contact-form">
-                    <input type="text" placeholder="Nombre" required>
-                    <input type="email" placeholder="Email" required>
-                    <textarea placeholder="Mensaje" rows="4" required></textarea>
-                    <button type="submit" class="btn-primary">Enviar</button>
-                </form>
+                <header class="section-header">
+                    <h2 id="angebot-title" class="section-title">Was gibt es zu essen?</h2>
+                    <p class="section-subtitle">Transparent, ehrlich, ohne Tricks.</p>
+                </header>
+
+                <!-- Bedürfnisfilter (freiwillig, nicht aufdringlich) -->
+                <div class="preference-filters">
+                    <p class="filter-label">Zeige mir passende Optionen (optional):</p>
+                    <div class="filter-chips">
+                        <button class="chip" data-filter="vegetarisch">Vegetarisch</button>
+                        <button class="chip" data-filter="vegan">Vegan</button>
+                        <button class="chip" data-filter="glutenfrei">Glutenfrei</button>
+                        <button class="chip" data-filter="laktosefrei">Laktosefrei</button>
+                        <button class="chip" data-filter="halal">Halal</button>
+                    </div>
+                </div>
+
+                <!-- Angebot-Karten -->
+                <div class="angebot-grid" role="list">
+                    <article class="angebot-card" role="listitem">
+                        <div class="angebot-image"></div>
+                        <div class="angebot-content">
+                            <h3>Empanadas Caseras</h3>
+                            <p class="angebot-beschreibung">Handgemacht mit Rindfleisch, Zwiebeln und Gewürzen nach Familienrezept.</p>
+                            <div class="angebot-info">
+                                <span class="tag">Enthält: Weizen, Ei</span>
+                            </div>
+                            <p class="angebot-preis">€ 3,50</p>
+                        </div>
+                    </article>
+
+                    <article class="angebot-card" role="listitem">
+                        <div class="angebot-image"></div>
+                        <div class="angebot-content">
+                            <h3>Arepas con Queso</h3>
+                            <p class="angebot-beschreibung">Traditionelle Maisfladen mit geschmolzenem Käse.</p>
+                            <div class="angebot-info">
+                                <span class="tag">Vegetarisch</span>
+                                <span class="tag">Glutenfrei</span>
+                            </div>
+                            <p class="angebot-preis">€ 4,00</p>
+                        </div>
+                    </article>
+
+                    <article class="angebot-card" role="listitem">
+                        <div class="angebot-image"></div>
+                        <div class="angebot-content">
+                            <h3>Tacos de Verduras</h3>
+                            <p class="angebot-beschreibung">Frisches Gemüse, schwarze Bohnen, Guacamole und Salsa.</p>
+                            <div class="angebot-info">
+                                <span class="tag">Vegan</span>
+                                <span class="tag">Glutenfrei</span>
+                            </div>
+                            <p class="angebot-preis">€ 5,00</p>
+                        </div>
+                    </article>
+                </div>
+
+                <!-- Transparenz-Hinweis -->
+                <div class="transparency-note">
+                    <p>Alle Zutaten sind vollständig aufgelistet. Keine versteckten Zusätze.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== -->
+        <!-- C3: COMMUNITY -->
+        <!-- ==================== -->
+        <section id="community" class="section-community" aria-labelledby="community-title">
+            <div class="container">
+                <header class="section-header">
+                    <h2 id="community-title" class="section-title">Gemeinsam statt allein</h2>
+                    <p class="section-subtitle">Plane zusammen, triff dich offline.</p>
+                </header>
+
+                <!-- Gemeinsame Planung -->
+                <div class="community-feature">
+                    <div class="feature-icon" aria-hidden="true">👥</div>
+                    <div class="feature-content">
+                        <h3>Wer geht hin?</h3>
+                        <p>Sieh, wer aus deiner Community zu Events geht – und plane gemeinsam.</p>
+                        <button class="btn-secondary">Freunde einladen</button>
+                    </div>
+                </div>
+
+                <!-- Lokale Gruppen -->
+                <div class="community-groups">
+                    <h3>Lokale Gruppen</h3>
+                    <div class="groups-grid">
+                        <article class="group-card">
+                            <h4>Foodie Treff Mitte</h4>
+                            <p>Gemeinsam neue Restaurants entdecken</p>
+                            <span class="group-members">23 Mitglieder in deiner Nähe</span>
+                        </article>
+                        <article class="group-card">
+                            <h4>Familien Ausflüge</h4>
+                            <p>Kinderfreundliche Events und Aktivitäten</p>
+                            <span class="group-members">45 Mitglieder in deiner Nähe</span>
+                        </article>
+                    </div>
+                </div>
+
+                <!-- Ethik-Hinweis -->
+                <div class="ethics-note">
+                    <p><strong>Unser Versprechen:</strong> Keine Like-Zähler, keine Vergleiche, kein Statusspiel. Hier geht es um echte Begegnungen.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== -->
+        <!-- C4: PROFIL & KONTROLLE -->
+        <!-- ==================== -->
+        <section id="profil" class="section-profil" aria-labelledby="profil-title">
+            <div class="container">
+                <header class="section-header">
+                    <h2 id="profil-title" class="section-title">Dein Bereich</h2>
+                    <p class="section-subtitle">Du bestimmst, was du siehst.</p>
+                </header>
+
+                <div class="profil-grid">
+                    <!-- Interessen -->
+                    <div class="profil-card">
+                        <h3>Deine Interessen</h3>
+                        <p>Hilf uns, passende Events zu zeigen – ohne algorithmische Tricks.</p>
+                        <div class="interest-tags">
+                            <span class="tag active">Kulinarik</span>
+                            <span class="tag">Kultur</span>
+                            <span class="tag active">Outdoor</span>
+                            <span class="tag">Familie</span>
+                            <span class="tag">Musik</span>
+                        </div>
+                        <button class="btn-text">Bearbeiten</button>
+                    </div>
+
+                    <!-- Benachrichtigungen -->
+                    <div class="profil-card">
+                        <h3>Benachrichtigungen</h3>
+                        <p>Wir bündeln Nachrichten – keine ständigen Unterbrechungen.</p>
+                        <div class="setting-row">
+                            <span>Tägliche Zusammenfassung</span>
+                            <label class="toggle">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-row">
+                            <span>Event-Erinnerungen</span>
+                            <label class="toggle">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-row">
+                            <span>„Nicht stören" Modus</span>
+                            <label class="toggle">
+                                <input type="checkbox">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Nutzungsübersicht -->
+                    <div class="profil-card">
+                        <h3>Deine Woche</h3>
+                        <p>Transparenz über deine Nutzung – nicht als Kontrolle, sondern als Orientierung.</p>
+                        <div class="usage-stats">
+                            <div class="stat">
+                                <span class="stat-value">3</span>
+                                <span class="stat-label">Events besucht</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-value">12 min</span>
+                                <span class="stat-label">App-Zeit heute</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Datenschutz -->
+                    <div class="profil-card">
+                        <h3>Datenschutz</h3>
+                        <p>Deine Daten gehören dir. Volle Kontrolle, volle Transparenz.</p>
+                        <button class="btn-text">Einstellungen öffnen</button>
+                        <button class="btn-text">Daten herunterladen</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== -->
+        <!-- STORIES (begrenzt, kuratiert) -->
+        <!-- ==================== -->
+        <section id="stories" class="section-stories" aria-labelledby="stories-title">
+            <div class="container">
+                <header class="section-header">
+                    <h2 id="stories-title" class="section-title">Highlights von heute</h2>
+                    <p class="section-subtitle">Kuratiert, begrenzt, mit klarem Ende.</p>
+                </header>
+
+                <div class="stories-container">
+                    <div class="story-item">
+                        <div class="story-image"></div>
+                        <span class="story-label">Marktplatz</span>
+                    </div>
+                    <div class="story-item">
+                        <div class="story-image"></div>
+                        <span class="story-label">Workshop</span>
+                    </div>
+                    <div class="story-item viewed">
+                        <div class="story-image"></div>
+                        <span class="story-label">Gestern</span>
+                    </div>
+                </div>
+
+                <!-- Stories Ende -->
+                <div class="stories-end" role="status">
+                    <p>Das waren die heutigen Highlights.</p>
+                </div>
             </div>
         </section>
     </main>
+
+    <!-- Bewusste Friktion: Pause-Hinweis -->
+    <div id="pause-reminder" class="pause-reminder" hidden>
+        <div class="pause-content">
+            <p>Du bist schon eine Weile hier. Zeit für eine Pause?</p>
+            <div class="pause-actions">
+                <button class="btn-secondary" id="continue-browsing">Weitermachen</button>
+                <button class="btn-primary" id="take-break">Pause machen</button>
+            </div>
+        </div>
+    </div>
 
     <footer>
         <div class="container">
             <div class="footer-content">
                 <div class="footer-brand">
                     <h3>Sabor a mi tierra</h3>
-                    <p>Auténticos sabores desde nuestra tierra</p>
+                    <p>Das Echte passiert offline.</p>
                 </div>
                 <div class="footer-links">
-                    <a href="#inicio">Inicio</a>
-                    <a href="#nosotros">Nosotros</a>
-                    <a href="#productos">Productos</a>
-                    <a href="#contacto">Contacto</a>
+                    <a href="#events">Events</a>
+                    <a href="#angebot">Angebot</a>
+                    <a href="#community">Community</a>
+                    <a href="#" class="footer-link-special">Unsere Ethik-Charta</a>
                 </div>
-                <div class="footer-social">
-                    <a href="#" aria-label="Instagram">Instagram</a>
-                    <a href="#" aria-label="Facebook">Facebook</a>
+                <div class="footer-legal">
+                    <a href="#">Datenschutz</a>
+                    <a href="#">Impressum</a>
+                    <a href="#">Barrierefreiheit</a>
                 </div>
             </div>
-            <p class="copyright">&copy; 2026 Sabor a mi tierra. Todos los derechos reservados.</p>
+            <p class="copyright">© 2026 Sabor a mi tierra. Alle Rechte vorbehalten.</p>
         </div>
     </footer>
 

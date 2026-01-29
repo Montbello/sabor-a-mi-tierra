@@ -1,0 +1,463 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// IDENTITY & ACCESS MODULE
+// ============================================
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String    @map("password_hash")
+  emailVerified Boolean   @default(false) @map("email_verified")
+  isActive      Boolean   @default(true) @map("is_active")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  lastLoginAt   DateTime? @map("last_login_at")
+
+  // Relations
+  profile         Profile?
+  sessions        Session[]
+  roleAssignments UserRoleAssignment[]
+  auditLogs       AuditLog[]
+
+  @@map("users")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  userId       String   @map("user_id")
+  token        String   @unique
+  csrfToken    String   @map("csrf_token")
+  userAgent    String?  @map("user_agent")
+  ipAddress    String?  @map("ip_address")
+  expiresAt    DateTime @map("expires_at")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("sessions")
+}
+
+enum RoleDomain {
+  CONSUMER
+  FRANCHISE
+  PARTNER
+  INTERNAL
+}
+
+model Role {
+  id          String     @id @default(cuid())
+  name        String     @unique
+  displayName String     @map("display_name")
+  description String?
+  domain      RoleDomain
+  isSystem    Boolean    @default(false) @map("is_system")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+
+  // Relations
+  permissions     RolePermission[]
+  userAssignments UserRoleAssignment[]
+
+  @@index([domain])
+  @@map("roles")
+}
+
+model Permission {
+  id          String   @id @default(cuid())
+  name        String   @unique // e.g., "event.view", "menu.manage"
+  displayName String   @map("display_name")
+  description String?
+  resource    String   // e.g., "event", "menu", "profile"
+  action      String   // e.g., "view", "create", "update", "delete", "manage"
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Relations
+  rolePermissions RolePermission[]
+
+  @@index([resource])
+  @@map("permissions")
+}
+
+model PermissionScope {
+  id          String   @id @default(cuid())
+  name        String   @unique // e.g., "public", "own_location", "self", "anonymized"
+  displayName String   @map("display_name")
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Relations
+  rolePermissions RolePermission[]
+
+  @@map("permission_scopes")
+}
+
+model RolePermission {
+  id           String  @id @default(cuid())
+  roleId       String  @map("role_id")
+  permissionId String  @map("permission_id")
+  scopeId      String? @map("scope_id")
+
+  role       Role             @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission       @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  scope      PermissionScope? @relation(fields: [scopeId], references: [id])
+
+  @@unique([roleId, permissionId, scopeId])
+  @@map("role_permissions")
+}
+
+model UserRoleAssignment {
+  id             String    @id @default(cuid())
+  userId         String    @map("user_id")
+  roleId         String    @map("role_id")
+  organizationId String?   @map("organization_id") // null for consumer roles
+  assignedAt     DateTime  @default(now()) @map("assigned_at")
+  expiresAt      DateTime? @map("expires_at")
+  assignedBy     String?   @map("assigned_by")
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role         Role          @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, roleId, organizationId])
+  @@index([userId])
+  @@index([organizationId])
+  @@map("user_role_assignments")
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String?  @map("user_id")
+  action     String   // e.g., "user.login", "menu.update"
+  resource   String?
+  resourceId String?  @map("resource_id")
+  metadata   Json?
+  ipAddress  String?  @map("ip_address")
+  userAgent  String?  @map("user_agent")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+// ============================================
+// ORGANIZATION MODULE (Multi-Tenant)
+// ============================================
+
+enum OrganizationType {
+  FRANCHISE
+  PARTNER
+  SUPPLIER
+  TECH_PARTNER
+  EVENT_ORGANIZER
+}
+
+model Organization {
+  id        String           @id @default(cuid())
+  name      String
+  slug      String           @unique
+  type      OrganizationType
+  isActive  Boolean          @default(true) @map("is_active")
+  settings  Json             @default("{}") // Flexible org settings
+  createdAt DateTime         @default(now()) @map("created_at")
+  updatedAt DateTime         @updatedAt @map("updated_at")
+
+  // Relations
+  members        UserRoleAssignment[]
+  salesInstances SalesInstance[]
+  menus          Menu[]
+  apiClients     ApiClient[]
+
+  @@index([type])
+  @@map("organizations")
+}
+
+model ApiClient {
+  id             String   @id @default(cuid())
+  organizationId String   @map("organization_id")
+  name           String
+  clientId       String   @unique @map("client_id")
+  clientSecret   String   @map("client_secret")
+  permissions    String[] // Array of permission names
+  isActive       Boolean  @default(true) @map("is_active")
+  rateLimit      Int      @default(1000) @map("rate_limit") // requests per hour
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@map("api_clients")
+}
+
+// ============================================
+// PROFILE ENGINE (CRM)
+// ============================================
+
+model Profile {
+  id           String    @id @default(cuid())
+  userId       String    @unique @map("user_id")
+  firstName    String?   @map("first_name")
+  lastName     String?   @map("last_name")
+  displayName  String?   @map("display_name")
+  avatarUrl    String?   @map("avatar_url")
+  phone        String?
+  dateOfBirth  DateTime? @map("date_of_birth")
+  ageGroup     String?   @map("age_group") // e.g., "gen_z", "millennial", "40_plus"
+  language     String    @default("es")
+  timezone     String    @default("Europe/Berlin")
+  metadata     Json      @default("{}") // Flexible additional fields
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  user                User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  preferences         ProfilePreference[]
+  dietaryRestrictions DietaryRestriction[]
+  consents            Consent[]
+
+  @@map("profiles")
+}
+
+model ProfilePreference {
+  id        String   @id @default(cuid())
+  profileId String   @map("profile_id")
+  category  String   // e.g., "food", "events", "communication"
+  key       String
+  value     Json
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@unique([profileId, category, key])
+  @@map("profile_preferences")
+}
+
+model DietaryRestriction {
+  id        String   @id @default(cuid())
+  profileId String   @map("profile_id")
+  type      String   // e.g., "allergy", "intolerance", "diet"
+  name      String   // e.g., "gluten", "lactose", "vegan"
+  severity  String?  // e.g., "mild", "severe"
+  notes     String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@unique([profileId, type, name])
+  @@map("dietary_restrictions")
+}
+
+model Consent {
+  id         String   @id @default(cuid())
+  profileId  String   @map("profile_id")
+  type       String   // e.g., "marketing", "analytics", "location", "dietary_recommendations"
+  granted    Boolean
+  grantedAt  DateTime @map("granted_at")
+  revokedAt  DateTime? @map("revoked_at")
+  ipAddress  String?  @map("ip_address")
+  version    String   // Consent policy version
+
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId])
+  @@index([type])
+  @@map("consents")
+}
+
+// ============================================
+// LOCATION & SALES MODULE
+// ============================================
+
+enum SalesInstanceType {
+  FOODTRUCK
+  RESTAURANT
+  GHOST_KITCHEN
+  SUPERMARKET
+  POP_UP
+  FESTIVAL_STAND
+}
+
+model Location {
+  id            String   @id @default(cuid())
+  name          String
+  address       String?
+  city          String?
+  postalCode    String?  @map("postal_code")
+  country       String   @default("DE")
+  latitude      Float?
+  longitude     Float?
+  isTemporary   Boolean  @default(false) @map("is_temporary")
+  validFrom     DateTime? @map("valid_from")
+  validUntil    DateTime? @map("valid_until")
+  metadata      Json     @default("{}")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  salesInstances SalesInstance[]
+
+  @@index([city])
+  @@index([country])
+  @@map("locations")
+}
+
+model SalesInstance {
+  id             String            @id @default(cuid())
+  organizationId String            @map("organization_id")
+  locationId     String            @map("location_id")
+  name           String
+  type           SalesInstanceType
+  isActive       Boolean           @default(true) @map("is_active")
+  settings       Json              @default("{}")
+  createdAt      DateTime          @default(now()) @map("created_at")
+  updatedAt      DateTime          @updatedAt @map("updated_at")
+
+  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  location       Location         @relation(fields: [locationId], references: [id])
+  operatingHours OperatingHour[]
+  menuAssignments SalesInstanceMenu[]
+
+  @@index([organizationId])
+  @@index([type])
+  @@map("sales_instances")
+}
+
+model OperatingHour {
+  id              String   @id @default(cuid())
+  salesInstanceId String   @map("sales_instance_id")
+  dayOfWeek       Int      // 0 = Sunday, 6 = Saturday
+  openTime        String   // HH:MM format
+  closeTime       String   // HH:MM format
+  isOpen          Boolean  @default(true) @map("is_open")
+
+  salesInstance SalesInstance @relation(fields: [salesInstanceId], references: [id], onDelete: Cascade)
+
+  @@unique([salesInstanceId, dayOfWeek])
+  @@map("operating_hours")
+}
+
+// ============================================
+// PRODUCT MODULE
+// ============================================
+
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  price       Decimal  @db.Decimal(10, 2)
+  imageUrl    String?  @map("image_url")
+  isActive    Boolean  @default(true) @map("is_active")
+  isVegan     Boolean  @default(false) @map("is_vegan")
+  isVegetarian Boolean @default(false) @map("is_vegetarian")
+  isGlutenFree Boolean @default(false) @map("is_gluten_free")
+  metadata    Json     @default("{}")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  ingredients ProductIngredient[]
+  menuItems   MenuItem[]
+
+  @@map("products")
+}
+
+model Ingredient {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  isAllergen  Boolean  @default(false) @map("is_allergen")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Relations
+  products         ProductIngredient[]
+  allergenInfo     Allergen?
+
+  @@map("ingredients")
+}
+
+model Allergen {
+  id           String  @id @default(cuid())
+  ingredientId String  @unique @map("ingredient_id")
+  code         String  @unique // EU allergen codes: A-N
+  name         String  // e.g., "Gluten", "Crustaceans", "Eggs"
+  description  String?
+
+  ingredient Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
+
+  @@map("allergens")
+}
+
+model ProductIngredient {
+  id           String  @id @default(cuid())
+  productId    String  @map("product_id")
+  ingredientId String  @map("ingredient_id")
+  isOptional   Boolean @default(false) @map("is_optional")
+  notes        String?
+
+  product    Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  ingredient Ingredient @relation(fields: [ingredientId], references: [id])
+
+  @@unique([productId, ingredientId])
+  @@map("product_ingredients")
+}
+
+model Menu {
+  id             String   @id @default(cuid())
+  organizationId String?  @map("organization_id") // null for global menus
+  name           String
+  description    String?
+  isActive       Boolean  @default(true) @map("is_active")
+  validFrom      DateTime? @map("valid_from")
+  validUntil     DateTime? @map("valid_until")
+  rules          Json     @default("{}") // Dynamic menu rules
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  organization     Organization?       @relation(fields: [organizationId], references: [id])
+  items            MenuItem[]
+  salesInstances   SalesInstanceMenu[]
+
+  @@map("menus")
+}
+
+model MenuItem {
+  id          String   @id @default(cuid())
+  menuId      String   @map("menu_id")
+  productId   String   @map("product_id")
+  displayOrder Int     @default(0) @map("display_order")
+  priceOverride Decimal? @map("price_override") @db.Decimal(10, 2)
+  isAvailable Boolean  @default(true) @map("is_available")
+
+  menu    Menu    @relation(fields: [menuId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
+
+  @@unique([menuId, productId])
+  @@map("menu_items")
+}
+
+model SalesInstanceMenu {
+  id              String   @id @default(cuid())
+  salesInstanceId String   @map("sales_instance_id")
+  menuId          String   @map("menu_id")
+  isPrimary       Boolean  @default(false) @map("is_primary")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  salesInstance SalesInstance @relation(fields: [salesInstanceId], references: [id], onDelete: Cascade)
+  menu          Menu          @relation(fields: [menuId], references: [id], onDelete: Cascade)
+
+  @@unique([salesInstanceId, menuId])
+  @@map("sales_instance_menus")
+}
