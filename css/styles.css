@@ -100,44 +100,340 @@ img {
     padding: 0 var(--space-lg);
 }
 
-/* ===== Welcome Overlay (Bewusste Friktion) ===== */
-.welcome-overlay {
+/* ===== Tropical Intro Animation ===== */
+.intro-overlay {
     position: fixed;
     inset: 0;
     z-index: 9999;
-    background: var(--color-primary);
+    background: linear-gradient(135deg, #1a472a 0%, #2d5a3f 30%, #3d6b4f 60%, #1a472a 100%);
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: opacity var(--transition-slow), visibility var(--transition-slow);
+    overflow: hidden;
+    transition: opacity 0.8s ease, visibility 0.8s ease;
 }
 
-.welcome-overlay.hidden {
+.intro-overlay.hidden {
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
 }
 
-.welcome-content {
+/* Animated Background */
+.intro-bg {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+}
+
+/* Palm Leaves */
+.palm-leaf {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    background: linear-gradient(45deg, #2d5a3f 0%, #4a7c59 100%);
+    border-radius: 0 100% 0 100%;
+    opacity: 0.3;
+}
+
+.palm-leaf-1 {
+    top: -100px;
+    left: -100px;
+    transform: rotate(-30deg);
+    animation: sway 12s ease-in-out infinite;
+}
+
+.palm-leaf-2 {
+    top: -50px;
+    right: -80px;
+    width: 280px;
+    height: 280px;
+    transform: rotate(120deg);
+    animation: sway 10s ease-in-out infinite reverse;
+}
+
+.palm-leaf-3 {
+    bottom: -100px;
+    left: 20%;
+    width: 380px;
+    height: 380px;
+    transform: rotate(45deg);
+    animation: sway 14s ease-in-out infinite;
+}
+
+@keyframes sway {
+    0%, 100% { transform: rotate(-30deg) translateX(0) translateY(0); }
+    33% { transform: rotate(-25deg) translateX(25px) translateY(-10px); }
+    66% { transform: rotate(-35deg) translateX(-15px) translateY(5px); }
+}
+
+/* Tropical Circles */
+.tropical-circle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.15;
+}
+
+.tropical-circle-1 {
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, #f39c12 0%, transparent 70%);
+    top: -250px;
+    right: -150px;
+    animation: pulse 6s ease-in-out infinite;
+}
+
+.tropical-circle-2 {
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, #e74c3c 0%, transparent 70%);
+    bottom: -200px;
+    left: -150px;
+    animation: pulse 8s ease-in-out infinite reverse;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 0.1; }
+    50% { transform: scale(1.2); opacity: 0.3; }
+}
+
+/* Floating Tropical Fruits */
+.tropical-fruit {
+    position: absolute;
+    font-size: 3rem;
+    opacity: 0;
+    animation: floatIn 1.5s ease forwards, float 8s ease-in-out infinite;
+}
+
+.fruit-1 {
+    top: 15%;
+    left: 10%;
+    animation-delay: 1s, 2.5s;
+}
+
+.fruit-2 {
+    top: 20%;
+    right: 15%;
+    font-size: 2.5rem;
+    animation-delay: 1.8s, 3.3s;
+}
+
+.fruit-3 {
+    bottom: 25%;
+    left: 15%;
+    font-size: 2rem;
+    animation-delay: 2.6s, 4.1s;
+}
+
+.fruit-4 {
+    bottom: 20%;
+    right: 10%;
+    font-size: 4rem;
+    animation-delay: 0.5s, 2s;
+}
+
+@keyframes floatIn {
+    0% { 
+        opacity: 0; 
+        transform: translateY(50px) scale(0.5) rotate(-20deg); 
+    }
+    100% { 
+        opacity: 0.8; 
+        transform: translateY(0) scale(1) rotate(0deg); 
+    }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-20px) rotate(8deg); }
+    50% { transform: translateY(-5px) rotate(-3deg); }
+    75% { transform: translateY(15px) rotate(-8deg); }
+}
+
+/* Intro Content */
+.intro-content {
+    position: relative;
+    z-index: 10;
     text-align: center;
     color: white;
     padding: var(--space-xl);
-    max-width: 500px;
 }
 
-.welcome-content h1 {
+.intro-text-container {
+    margin-bottom: var(--space-2xl);
+}
+
+.intro-title {
     font-family: var(--font-display);
-    font-size: clamp(2rem, 6vw, 3.5rem);
+    font-size: clamp(3.5rem, 15vw, 10rem);
     font-weight: 700;
-    margin-bottom: var(--space-md);
-    line-height: 1.1;
+    line-height: 0.9;
+    margin-bottom: var(--space-lg);
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
 }
 
-.welcome-content p {
-    font-size: 1.125rem;
-    opacity: 0.9;
-    margin-bottom: var(--space-xl);
-    line-height: 1.7;
+.intro-line {
+    display: block;
+    opacity: 0;
+    transform: translateY(120px) rotateX(-90deg);
+    animation: revealLine 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    transform-origin: center bottom;
+}
+
+.line-1 { 
+    animation-delay: 0.8s; 
+}
+.line-2 { 
+    animation-delay: 1.6s;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 0.6em;
+}
+.line-3 { 
+    animation-delay: 2.4s; 
+}
+
+@keyframes revealLine {
+    0% {
+        opacity: 0;
+        transform: translateY(120px) rotateX(-90deg) scale(0.9);
+        filter: blur(10px);
+    }
+    60% {
+        opacity: 1;
+        filter: blur(0);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) rotateX(0deg) scale(1);
+        filter: blur(0);
+    }
+}
+
+.intro-tagline {
+    font-size: clamp(1.25rem, 3vw, 2rem);
+    font-weight: 600;
+    opacity: 0;
+    animation: fadeUp 1.2s ease forwards;
+    animation-delay: 3.8s;
+    margin-bottom: var(--space-sm);
+    color: #f39c12;
+}
+
+.intro-subtitle {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    font-weight: 300;
+    opacity: 0;
+    animation: fadeUp 1.2s ease forwards;
+    animation-delay: 4.4s;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+@keyframes fadeUp {
+    0% { 
+        opacity: 0; 
+        transform: translateY(30px);
+        filter: blur(5px);
+    }
+    100% { 
+        opacity: 1; 
+        transform: translateY(0);
+        filter: blur(0);
+    }
+}
+
+/* Enter Button */
+.btn-enter {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-lg) var(--space-2xl);
+    background: #f39c12;
+    color: #1a472a;
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border: none;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(40px) scale(0.9);
+    animation: buttonReveal 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-delay: 5.2s;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+
+@keyframes buttonReveal {
+    0% {
+        opacity: 0;
+        transform: translateY(40px) scale(0.9);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.btn-enter:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 10px 40px rgba(243, 156, 18, 0.4);
+    background: #f5ab35;
+}
+
+.btn-enter svg {
+    transition: transform 0.3s ease;
+}
+
+.btn-enter:hover svg {
+    transform: translateX(5px);
+}
+
+/* Skip Button */
+.intro-skip {
+    position: absolute;
+    bottom: var(--space-xl);
+    right: var(--space-xl);
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.85rem;
+    cursor: pointer;
+    opacity: 0;
+    animation: fadeIn 0.8s ease forwards;
+    animation-delay: 2s;
+    transition: color 0.2s ease;
+}
+
+.intro-skip:hover {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+/* Scroll Indicator on Intro */
+.intro-overlay::after {
+    content: '';
+    position: absolute;
+    bottom: var(--space-2xl);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 60px;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.5), transparent);
+    opacity: 0;
+    animation: scrollHint 2s ease-in-out infinite;
+    animation-delay: 6s;
+}
+
+@keyframes scrollHint {
+    0%, 100% { opacity: 0; height: 0; }
+    50% { opacity: 0.5; height: 60px; }
 }
 
 /* ===== Navigation ===== */

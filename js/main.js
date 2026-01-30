@@ -25,8 +25,9 @@ const CONFIG = {
 
 // ===== DOM Elemente =====
 const elements = {
-    welcomeOverlay: document.getElementById('welcome-overlay'),
+    introOverlay: document.getElementById('intro-overlay'),
     enterApp: document.getElementById('enter-app'),
+    skipIntro: document.getElementById('skip-intro'),
     navbar: document.querySelector('.navbar'),
     menuToggle: document.querySelector('.menu-toggle'),
     navLinks: document.querySelector('.nav-links'),
@@ -38,26 +39,48 @@ const elements = {
     takeBreak: document.getElementById('take-break')
 };
 
-// ===== Welcome Overlay (Bewusste Friktion) =====
+// ===== Tropical Intro Animation =====
 // Der Nutzer muss aktiv entscheiden, die App zu betreten
-function initWelcomeOverlay() {
+function initIntroAnimation() {
     // Prüfen ob bereits heute besucht
     const lastVisit = localStorage.getItem('lastVisit');
     const today = new Date().toDateString();
     
     if (lastVisit === today) {
-        // Heute schon begrüßt - Overlay überspringen
-        elements.welcomeOverlay?.classList.add('hidden');
+        // Heute schon begrüßt - Intro überspringen
+        elements.introOverlay?.classList.add('hidden');
+        startPauseReminderTimer();
     }
     
+    // Enter Button
     elements.enterApp?.addEventListener('click', () => {
-        elements.welcomeOverlay?.classList.add('hidden');
-        localStorage.setItem('lastVisit', today);
-        
-        // Session-Start für Wellness-Features
-        CONFIG.sessionStartTime = Date.now();
-        startPauseReminderTimer();
+        closeIntro();
     });
+    
+    // Skip Button
+    elements.skipIntro?.addEventListener('click', () => {
+        closeIntro();
+    });
+    
+    // Keyboard: Enter oder Space zum Starten
+    document.addEventListener('keydown', (e) => {
+        if ((e.key === 'Enter' || e.key === ' ') && !elements.introOverlay?.classList.contains('hidden')) {
+            e.preventDefault();
+            closeIntro();
+        }
+    });
+}
+
+function closeIntro() {
+    const today = new Date().toDateString();
+    
+    // Smooth transition out
+    elements.introOverlay?.classList.add('hidden');
+    localStorage.setItem('lastVisit', today);
+    
+    // Session-Start für Wellness-Features
+    CONFIG.sessionStartTime = Date.now();
+    startPauseReminderTimer();
 }
 
 // ===== Navigation =====
@@ -429,7 +452,7 @@ function initEventButtons() {
 
 // ===== Initialisierung =====
 document.addEventListener('DOMContentLoaded', () => {
-    initWelcomeOverlay();
+    initIntroAnimation();
     initNavigation();
     initFilters();
     initLoadMore();
@@ -441,8 +464,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initInterestTags();
     initEventButtons();
     
-    // Starte Pause-Timer wenn Overlay bereits versteckt
-    if (elements.welcomeOverlay?.classList.contains('hidden')) {
+    // Starte Pause-Timer wenn Intro bereits versteckt
+    if (elements.introOverlay?.classList.contains('hidden')) {
         startPauseReminderTimer();
     }
     

@@ -11,13 +11,42 @@
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <!-- Bewusste Friktion: Begrüßung -->
-    <div id="welcome-overlay" class="welcome-overlay" role="dialog" aria-modal="true">
-        <div class="welcome-content">
-            <h1>Raus aus der Bude.</h1>
-            <p>Bei uns gibt es immer etwas Lustiges um die Ecke – und das Echte passiert offline.</p>
-            <button class="btn-primary" id="enter-app">Events entdecken</button>
+    <!-- Tropische Intro Animation -->
+    <div id="intro-overlay" class="intro-overlay" role="dialog" aria-modal="true">
+        <!-- Animated Background Elements -->
+        <div class="intro-bg">
+            <div class="palm-leaf palm-leaf-1"></div>
+            <div class="palm-leaf palm-leaf-2"></div>
+            <div class="palm-leaf palm-leaf-3"></div>
+            <div class="tropical-circle tropical-circle-1"></div>
+            <div class="tropical-circle tropical-circle-2"></div>
+            <div class="tropical-fruit fruit-1">🥭</div>
+            <div class="tropical-fruit fruit-2">🍍</div>
+            <div class="tropical-fruit fruit-3">🥥</div>
+            <div class="tropical-fruit fruit-4">🌴</div>
         </div>
+        
+        <!-- Animated Text Sequence -->
+        <div class="intro-content">
+            <div class="intro-text-container">
+                <h1 class="intro-title">
+                    <span class="intro-line line-1">Sabor</span>
+                    <span class="intro-line line-2">a mi</span>
+                    <span class="intro-line line-3">tierra</span>
+                </h1>
+                <p class="intro-tagline">Raus aus der Bude.</p>
+                <p class="intro-subtitle">Das Echte passiert offline.</p>
+            </div>
+            <button class="btn-enter" id="enter-app">
+                <span>Entdecken</span>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+            </button>
+        </div>
+        
+        <!-- Skip Button -->
+        <button class="intro-skip" id="skip-intro">Überspringen</button>
     </div>
 
     <header>
